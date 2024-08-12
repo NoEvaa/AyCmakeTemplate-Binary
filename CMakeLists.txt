@@ -25,6 +25,16 @@ include(cmake/Init.cmake)
 # ==================================================
 # Module library
 
+# Set library directory
+if(${CMAKE_BUILD_TYPE} STREQUAL "Debug")
+    set(${MODULE_NAME}_BUILD_DIR debug)
+else()
+    set(${MODULE_NAME}_BUILD_DIR release)
+endif()
+set(${MODULE_NAME}_STATIC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/lib/${${MODULE_NAME}_BUILD_DIR})
+set(${MODULE_NAME}_SHARED_DIR ${CMAKE_CURRENT_SOURCE_DIR}/bin/${${MODULE_NAME}_BUILD_DIR})
+set(${MODULE_NAME}_IMPLIB_DIR ${CMAKE_CURRENT_SOURCE_DIR}/implib/${${MODULE_NAME}_BUILD_DIR})
+
 if(${PROJECT_NAME}_BUILD_SHARED)
     add_library(${MODULE_NAME} SHARED IMPORTED GLOBAL)
 else()
@@ -33,7 +43,7 @@ endif()
 
 target_include_directories(
     ${MODULE_NAME}
-    PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include
+    INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/include
 )
 
 add_library(${MODULE_NS}::${MODULE_NAME} ALIAS ${MODULE_NAME})
