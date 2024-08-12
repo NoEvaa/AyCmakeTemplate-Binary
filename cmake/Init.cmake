@@ -43,6 +43,24 @@ if(${PROJECT_NAME}_IS_MAIN)
     set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/release)
 endif()
 
+if()
+cmake_minimum_required(VERSION 3.10)
+
+project(MyProject)
+
+# Init lib suffix
+if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
+    set(SHARED_LIB_SUFFIX ".so")
+    set(STATIC_LIB_SUFFIX ".a")
+elseif(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
+    set(SHARED_LIB_SUFFIX ".dll")
+    set(STATIC_LIB_SUFFIX ".lib")
+else()
+    message(FATAL_ERROR "Unknown platform: ${CMAKE_SYSTEM_NAME}" )
+    set(SHARED_LIB_SUFFIX "")
+    set(STATIC_LIB_SUFFIX "")
+endif()
+
 if(${PROJECT_NAME}_IS_MAIN)
     message(STATUS "Main project: ${PROJECT_NAME}")
     message(STATUS "Build type: ${CMAKE_BUILD_TYPE}")

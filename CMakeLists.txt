@@ -24,40 +24,20 @@ include(cmake/Init.cmake)
 
 # ==================================================
 # Module library
+
 if(${PROJECT_NAME}_BUILD_SHARED)
-    set(${MODULE_NAME}_LIB_TYPE SHARED)
+    add_library(${MODULE_NAME} SHARED IMPORTED GLOBAL)
 else()
-    set(${MODULE_NAME}_LIB_TYPE STATIC)
+    add_library(${MODULE_NAME} STATIC IMPORTED)
 endif()
-
-file(GLOB_RECURSE ${MODULE_NAME}_HEADERS
-    CONFIGURE_DEPENDS
-    "include/*.h" "include/*.hpp"
-    "include/*.inl" "include/*.tcc"
-)
-
-file(GLOB_RECURSE ${MODULE_NAME}_SOURCES
-    CONFIGURE_DEPENDS
-    "src/*.cc" "src/*.cpp" "src/*.c"
-    "src/*.h" "src/*.hpp"
-    "src/*.inl" "src/*.tcc"
-)
-
-add_library(
-    ${MODULE_NAME}
-    ${${MODULE_NAME}_LIB_TYPE}
-    ${${MODULE_NAME}_HEADERS}
-    ${${MODULE_NAME}_SOURCES}
-)
 
 target_include_directories(
     ${MODULE_NAME}
     PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include
-    PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src
 )
 
 add_library(${MODULE_NS}::${MODULE_NAME} ALIAS ${MODULE_NAME})
-message(STATUS "Build `${${MODULE_NAME}_LIB_TYPE}` library `${MODULE_NS}::${MODULE_NAME}`")
+message(STATUS "Build library `${MODULE_NS}::${MODULE_NAME}`")
 
 # ==================================================
 # Project development environment 
