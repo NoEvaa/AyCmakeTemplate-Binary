@@ -36,10 +36,31 @@ set(${MODULE_NAME}_SHARED_DIR ${CMAKE_CURRENT_SOURCE_DIR}/bin/${${MODULE_NAME}_B
 set(${MODULE_NAME}_IMPLIB_DIR ${CMAKE_CURRENT_SOURCE_DIR}/implib/${${MODULE_NAME}_BUILD_DIR})
 
 if(${PROJECT_NAME}_BUILD_SHARED)
+    # Add shared library
     add_library(${MODULE_NAME} SHARED IMPORTED GLOBAL)
+    # imported location
+    file(GLOB ${MODULE_NAME}_IMP_LOC "${${MODULE_NAME}_SHARED_DIR}/*${SHARED_LIB_SUFFIX}")
+    if(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
+        # imported implib need to be set on Windows
+        file(GLOB ${MODULE_NAME}_IMP_LIB "${${MODULE_NAME}_IMPLIB_DIR}/*.lib")
+        set_target_properties(
+            ${MODULE_NAME}
+            PROPERTIES
+            IMPORTED_IMPLIB ${${MODULE_NAME}_IMP_LIB}
+        )
+    endif()
 else()
+    # Add static library
     add_library(${MODULE_NAME} STATIC IMPORTED)
+    # imported location
+    file(GLOB ${MODULE_NAME}_IMP_LOC "${${MODULE_NAME}_STATIC_DIR}/*${STATIC_LIB_SUFFIX}")
 endif()
+
+set_target_properties(
+    ${MODULE_NAME}
+    PROPERTIES
+    IMPORTED_LOCATION ${${MODULE_NAME}_IMP_LOC}
+)
 
 target_include_directories(
     ${MODULE_NAME}

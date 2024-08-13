@@ -43,13 +43,8 @@ if(${PROJECT_NAME}_IS_MAIN)
     set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/release)
 endif()
 
-if()
-cmake_minimum_required(VERSION 3.10)
-
-project(MyProject)
-
 # Init lib suffix
-if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
+if(${CMAKE_SYSTEM_NAME} MATCHES "Linux" OR ${CMAKE_SYSTEM_NAME} MATCHES "Android")
     set(SHARED_LIB_SUFFIX ".so")
     set(STATIC_LIB_SUFFIX ".a")
 elseif(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
