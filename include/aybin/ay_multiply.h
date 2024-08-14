@@ -1,7 +1,7 @@
 #pragma once
 
 #if defined(_WIN32) && !defined(__GNUC__)
-    #define AY_BIN_API __declspec(dllexport)
+    #define AY_BIN_API __declspec(dllimport)
 #else
     #define AY_BIN_API
 #endif
