@@ -38,10 +38,10 @@ set(${MODULE_NAME}_IMPLIB_DIR ${CMAKE_CURRENT_SOURCE_DIR}/implib/${${MODULE_NAME
 if(${PROJECT_NAME}_BUILD_SHARED)
     # Add shared library
     add_library(${MODULE_NAME} SHARED IMPORTED GLOBAL)
-    # imported location
+    # Search imported location
     file(GLOB ${MODULE_NAME}_IMP_LOC "${${MODULE_NAME}_SHARED_DIR}/*${SHARED_LIB_SUFFIX}")
     if(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
-        # imported implib need to be set on Windows
+        # Imported implib need to be set on Windows
         file(GLOB ${MODULE_NAME}_IMP_LIB "${${MODULE_NAME}_IMPLIB_DIR}/*.lib")
         set_target_properties(
             ${MODULE_NAME}
@@ -52,8 +52,11 @@ if(${PROJECT_NAME}_BUILD_SHARED)
 else()
     # Add static library
     add_library(${MODULE_NAME} STATIC IMPORTED)
-    # imported location
+    # Search imported location
     file(GLOB ${MODULE_NAME}_IMP_LOC "${${MODULE_NAME}_STATIC_DIR}/*${STATIC_LIB_SUFFIX}")
+    # Define static lib macro
+    string(TOUPPER "${MODULE_NAME}" MODULE_NAME_UPPER)
+    target_compile_definitions(${MODULE_NAME} INTERFACE ${MODULE_NAME_UPPER}_IS_STATIC)
 endif()
 
 set_target_properties(
@@ -68,7 +71,8 @@ target_include_directories(
 )
 
 add_library(${MODULE_NS}::${MODULE_NAME} ALIAS ${MODULE_NAME})
-message(STATUS "Build library `${MODULE_NS}::${MODULE_NAME}`")
+get_target_property(${MODULE_NAME}_LIB_TYPE ${MODULE_NAME} TYPE)
+message(STATUS "Build `${${MODULE_NAME}_LIB_TYPE}` library: `${MODULE_NS}::${MODULE_NAME}`")
 
 # ==================================================
 # Project development environment 
