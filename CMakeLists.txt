@@ -13,7 +13,11 @@ project(
 set(MODULE_NAME aybin)
 set(MODULE_NS ayin)
 
+string(TOUPPER "${MODULE_NAME}" MODULE_NAME_UPPER)
+
 # ==================================================
+
+include(GenerateExportHeader)
 
 # Project options
 include(cmake/Options.cmake)
@@ -55,9 +59,15 @@ else()
     # Search imported location
     file(GLOB ${MODULE_NAME}_IMP_LOC "${${MODULE_NAME}_STATIC_DIR}/*${STATIC_LIB_SUFFIX}")
     # Define static lib macro
-    string(TOUPPER "${MODULE_NAME}" MODULE_NAME_UPPER)
-    target_compile_definitions(${MODULE_NAME} INTERFACE ${MODULE_NAME_UPPER}_IS_STATIC)
+    target_compile_definitions(${MODULE_NAME} PUBLIC ${MODULE_NAME_UPPER}_STATIC_DEFINE)
 endif()
+
+generate_export_header(
+    ${MODULE_NAME}
+    BASE_NAME ${MODULE_NAME}
+    EXPORT_FILE_NAME "${CMAKE_BINARY_DIR}/ext_include/${MODULE_NAME}/export.h"
+    STATIC_DEFINE "${MODULE_NAME_UPPER}_STATIC_DEFINE"
+)
 
 set_target_properties(
     ${MODULE_NAME}
@@ -68,6 +78,7 @@ set_target_properties(
 target_include_directories(
     ${MODULE_NAME}
     INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/include
+    INTERFACE ${CMAKE_BINARY_DIR}/ext_include
 )
 
 add_library(${MODULE_NS}::${MODULE_NAME} ALIAS ${MODULE_NAME})
