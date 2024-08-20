@@ -44,8 +44,8 @@ if(${PROJECT_NAME}_BUILD_SHARED)
     add_library(${MODULE_NAME} SHARED IMPORTED GLOBAL)
     # Search imported location
     file(GLOB ${MODULE_NAME}_IMP_LOC "${${MODULE_NAME}_SHARED_DIR}/*${SHARED_LIB_SUFFIX}")
+    # Imported implib need to be set on Windows
     if(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
-        # Imported implib need to be set on Windows
         file(GLOB ${MODULE_NAME}_IMP_LIB "${${MODULE_NAME}_IMPLIB_DIR}/*.lib")
         set_target_properties(
             ${MODULE_NAME}
@@ -59,20 +59,20 @@ else()
     # Search imported location
     file(GLOB ${MODULE_NAME}_IMP_LOC "${${MODULE_NAME}_STATIC_DIR}/*${STATIC_LIB_SUFFIX}")
     # Define static lib macro
-    target_compile_definitions(${MODULE_NAME} PUBLIC ${MODULE_NAME_UPPER}_STATIC_DEFINE)
+    target_compile_definitions(${MODULE_NAME} INTERFACE ${MODULE_NAME_UPPER}_STATIC_DEFINE)
 endif()
+
+set_target_properties(
+    ${MODULE_NAME}
+    PROPERTIES
+    IMPORTED_LOCATION ${${MODULE_NAME}_IMP_LOC}
+)
 
 generate_export_header(
     ${MODULE_NAME}
     BASE_NAME ${MODULE_NAME}
     EXPORT_FILE_NAME "${CMAKE_BINARY_DIR}/ext_include/${MODULE_NAME}/export.h"
     STATIC_DEFINE "${MODULE_NAME_UPPER}_STATIC_DEFINE"
-)
-
-set_target_properties(
-    ${MODULE_NAME}
-    PROPERTIES
-    IMPORTED_LOCATION ${${MODULE_NAME}_IMP_LOC}
 )
 
 target_include_directories(
